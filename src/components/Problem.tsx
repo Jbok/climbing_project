@@ -1,6 +1,11 @@
 import './Problem.css'
 
-function Problem(key: number, cellSize: number) {
+type ProblemProps = {
+  key: number
+  cellSize: number
+}
+
+function Problem({ key, cellSize }: ProblemProps) {
   return (
     <>
       <button

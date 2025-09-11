@@ -3,7 +3,7 @@ import Problem from './Problem.tsx'
 
 const rows = 5
 const cols = 5
-const cellSize: number = 120
+const cellSize: number = 55
 const gap = 4
 
 function Table() {
