@@ -4,13 +4,13 @@ import './index.css'
 import App from './App.tsx'
 import Table from './components/Table.tsx'
 import AuthProvider from './provider/authProvider.tsx'
-import Login from './components/Login.tsx'
+// import Login from './components/Login.tsx'
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <AuthProvider>
       <App />
-      <Login />
+      {/* <Login /> */}
       <Table />
     </AuthProvider>
   </StrictMode>

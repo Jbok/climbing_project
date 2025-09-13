@@ -1,23 +1,83 @@
-.problem:focus {
-  outline: 2px solid dodgerblue;
+/* ===== CSS 변수 정의 ===== */
+:root {
+  --problem-primary-color: #4caf50;
+  --problem-warning-color: #f15a14;
+  --problem-info-color: #2196f3;
+  --problem-text-color: #333;
+  --problem-border-color: #666;
+  --problem-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  --problem-border-radius: 5px;
+  --problem-modal-radius: 10px;
+
+  /* 412x915 모바일 최적화 */
+  --mobile-width: 412px;
+  --mobile-height: 915px;
 }
 
+/* ===== 문제 컨테이너 ===== */
 .problem-container {
   position: relative;
 }
 
+/* ===== 메인 버튼 ===== */
+.problem {
+  width: 100%;
+  height: 100%;
+  border: none;
+  cursor: pointer;
+  transition: transform 0.1s ease;
+  border: 1px solid black;
+  background-color: white;
+  border-radius: 12px; /* 둥근 버튼 */
+
+  font-family: 'Jua', sans-serif; /* 귀여운 폰트 */
+  font-size: 1.2rem;
+  font-weight: 600;
+  letter-spacing: 1px; /* 살짝 띄우기 */
+  text-shadow: 1px 1px 0px #fff; /* 하이라이트 효과 */
+}
+
+.problem:focus {
+  outline: 2px solid var(--problem-info-color);
+  outline-offset: 2px;
+}
+
+.problem:hover {
+  filter: drop-shadow(0 0 10px #646cffaa); /* 범위를 더 넓게 */
+  transform: scale(0.98);
+}
+
+.problem:active {
+  transform: scale(0.95);
+}
+
+@keyframes rotate-wiggle {
+  0% {
+    transform: translate(-50%, -50%) rotate(-20deg);
+  }
+  50% {
+    transform: translate(-50%, -50%) rotate(20deg);
+  }
+  100% {
+    transform: translate(-50%, -50%) rotate(-20deg);
+  }
+}
+
+/* ===== 완료 스탬프 ===== */
 .clear_stamp_overlay {
   position: absolute;
-  /* top: 1px; */
+  width: 100%;
+  height: 100%;
+  top: 50%;
   left: 50%;
-  transform: translate(-50%, -100%);
-  width: 50px;
-  height: 50px;
+  transform: translate(-50%, -50%); /* 정확히 가운데 */
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   pointer-events: none;
+
+  animation: rotate-wiggle 2s ease-in-out infinite;
 }
 
 @media (prefers-reduced-motion: no-preference) {
@@ -26,5 +86,175 @@
     height: 100%;
     border-radius: 50%;
     animation: logo-spin infinite 20s linear;
+  }
+}
+
+/* ===== 모달 오버레이 ===== */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  animation: fadeIn 0.2s ease-out;
+}
+
+/* ===== 모달 내용 ===== */
+.modal-content {
+  background-color: white;
+  padding: 20px;
+  border-radius: var(--problem-modal-radius);
+  box-shadow: var(--problem-shadow);
+  width: 320px;
+  max-width: calc(100vw - 40px);
+  text-align: center;
+  position: relative;
+  animation: slideIn 0.3s ease-out;
+}
+
+.modal-title {
+  margin: 0 0 20px 0;
+  color: var(--problem-text-color);
+  font-size: 16px;
+  font-weight: 600;
+}
+
+/* ===== 모달 버튼 그룹 ===== */
+.modal-buttons {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.modal-button {
+  padding: 10px 16px;
+  color: white;
+  border: none;
+  border-radius: var(--problem-border-radius);
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+  min-width: 70px;
+  flex: 1;
+  transition: all 0.2s ease;
+}
+
+.modal-button:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
+}
+
+.modal-button:active {
+  transform: translateY(0);
+}
+
+.modal-button:focus {
+  outline: 2px solid rgba(255, 255, 255, 0.5);
+  outline-offset: 2px;
+}
+
+/* ===== 버튼 타입별 색상 ===== */
+.modal-button-clear {
+  background-color: var(--problem-primary-color);
+}
+
+.modal-button-reset {
+  background-color: var(--problem-warning-color);
+}
+
+.modal-button-edit {
+  background-color: var(--problem-info-color);
+}
+
+/* ===== 닫기 버튼 ===== */
+.modal-close-button {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background-color: transparent;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+  color: var(--problem-border-color);
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.modal-close-button:hover {
+  color: var(--problem-text-color);
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+.modal-close-button:focus {
+  outline: 2px solid var(--problem-info-color);
+  outline-offset: 2px;
+}
+
+/* ===== 애니메이션 ===== */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* ===== 반응형 디자인 ===== */
+@media (max-width: 480px) {
+  .modal-content {
+    margin: 20px;
+    padding: 20px;
+    min-width: auto;
+  }
+
+  .modal-buttons {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .modal-button {
+    width: 100%;
+  }
+}
+
+/* ===== 접근성 개선 ===== */
+@media (prefers-reduced-motion: reduce) {
+  .clear_stamp_image {
+    animation: none;
+  }
+
+  .modal-overlay {
+    animation: none;
+  }
+
+  .modal-content {
+    animation: none;
+  }
+
+  .modal-button:hover {
+    transform: none;
   }
 }
