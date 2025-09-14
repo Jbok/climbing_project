@@ -1,9 +1,12 @@
 import './Problem.css'
+import { db } from './Firebase'
+import { doc, setDoc, onSnapshot, getDoc } from 'firebase/firestore'
 import { useState, useCallback, useEffect } from 'react'
 import clearStampImsage from '../assets/clear_stamp.png'
 
 type ProblemProps = {
   id: number
+  onNameChange?: (id: number, hasName: boolean) => void
   onCompleteChange?: (id: number, completed: boolean) => void // ✅ 추가
 }
 
@@ -11,6 +14,29 @@ type ProblemState = {
   isCompleted: boolean
   showModal: boolean
   showModify: boolean
+}
+
+const problemDocRef = (problemId: number) =>
+  doc(db, 'problems', String(problemId))
+
+export async function saveProblemName(problemId: number, name: string) {
+  // merge:true 로 다른 필드가 있어도 안전
+  await setDoc(problemDocRef(problemId), { name }, { merge: true })
+}
+
+export function watchProblemName(
+  problemId: number,
+  onChange: (name: string | null) => void
+) {
+  return onSnapshot(problemDocRef(problemId), snap => {
+    const data = snap.data()
+    onChange(data?.name ?? null)
+  })
+}
+
+export async function fetchProblemNameOnce(problemId: number) {
+  const snap = await getDoc(problemDocRef(problemId))
+  return snap.exists() ? (snap.data().name as string) : null
 }
 
 // 상수 정의
@@ -23,7 +49,7 @@ const BUTTON_TYPES = {
 
 type ButtonType = (typeof BUTTON_TYPES)[keyof typeof BUTTON_TYPES]
 
-function Problem({ id, onCompleteChange }: ProblemProps) {
+function Problem({ id, onCompleteChange, onNameChange }: ProblemProps) {
   const [inputValue, setInputValue] = useState<string>('')
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setInputValue(e.target.value)
@@ -31,14 +57,26 @@ function Problem({ id, onCompleteChange }: ProblemProps) {
 
   const [name, setName] = useState<string>('')
   // 버튼 클릭 시 실행
-  const handleConfirmNameChange = () => {
-    setName(inputValue)
+  const handleConfirmNameChange = async () => {
+    const next = inputValue.trim()
+    if (next.length === 0) return
+    await saveProblemName(id, next)
+    // 저장하면 watch가 발화하여 name이 갱신됨
     closeModal()
   }
 
   useEffect(() => {
-    setName('빨강')
-  }, []) // ✅ 빈 배열 → 처음 렌더링 때만 실행
+    const ref = doc(db, 'problems', 'problemId_' + String(id))
+    const unsub = onSnapshot(ref, snap => {
+      if (snap.exists()) {
+        console.log(id)
+        console.log(snap.data())
+        setName(snap.data().name ?? '')
+        onNameChange?.(id, snap.data().name)
+      }
+    })
+    return () => unsub()
+  }, [id, onNameChange])
 
   const [problemState, setProblemState] = useState<ProblemState>({
     isCompleted: false,
@@ -132,7 +170,7 @@ function Problem({ id, onCompleteChange }: ProblemProps) {
         onClick={openModal}
         aria-label={`문제 ${id}`}
         aria-expanded={problemState.showModal}>
-        {name || <>노랑</>}
+        {name}
       </button>
 
       {/* 완료 스탬프 */}

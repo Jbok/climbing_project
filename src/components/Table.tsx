@@ -2,7 +2,7 @@ import './Table.css'
 import Problem from './Problem.tsx'
 import { useState } from 'react'
 
-const rows = 5
+const rows = 6
 const cols = 3
 const gap = 4
 
@@ -18,7 +18,7 @@ function Table() {
   const adjustedCellSize = Math.min(
     Math.floor((availableWidth - gap * (cols - 1)) / cols),
     Math.floor((availableHeight - gap * (rows - 1)) / rows),
-    150 // 최소 크기
+    100 // 최소 크기
   )
 
   const [completedStates, setCompletedStates] = useState<boolean[]>(
@@ -34,15 +34,28 @@ function Table() {
     })
   }
 
+  const [nameStates, setNameStates] = useState<boolean[]>(
+    Array(rows * cols).fill(false)
+  )
+
+  const handleNameChange = (id: number, hasName: boolean) => {
+    setNameStates(prev => {
+      const newStates = [...prev]
+      newStates[id] = hasName
+      return newStates
+    })
+  }
+
   // ✅ 완료된 개수 계산
   const completedCount = completedStates.filter(Boolean).length
+  const nameCount = nameStates.filter(Boolean).length
 
   return (
     <>
-      <h1>
-        {completedCount} / {rows * cols} (
-        {((completedCount / (rows * cols)) * 100).toFixed(1)} %)
-      </h1>
+      <h3>
+        {completedCount} / {nameCount} (
+        {((completedCount / nameCount) * 100).toFixed(1)} %)
+      </h3>
       <div className="table-container">
         <div
           className="problem-grid"
@@ -55,6 +68,7 @@ function Table() {
               <Problem
                 id={i}
                 onCompleteChange={handleCompleteChange}
+                onNameChange={handleNameChange}
               />
             )
           })}
