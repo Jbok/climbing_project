@@ -20,5 +20,4 @@ onAuthStateChanged(auth, user => {
   if (!user) {
     signInAnonymously(auth).catch(console.error)
   }
-  console.log('익명 로그인 성공 ✅', user.uid, user.isAnonymous) // true
 })
