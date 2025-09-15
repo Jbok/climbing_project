@@ -1,27 +1,19 @@
 import './Problem.css'
 import { db } from './Firebase'
-import { doc, setDoc, onSnapshot, getDoc } from 'firebase/firestore'
+import { doc, updateDoc, onSnapshot } from 'firebase/firestore'
 import { useState, useCallback, useEffect } from 'react'
 import clearStampImsage from '../assets/clear_stamp.png'
 
 type ProblemProps = {
-  id: number
-  onNameChange?: (id: number, hasName: boolean) => void
-  onCompleteChange?: (id: number, completed: boolean) => void // ✅ 추가
+  id: string
+  name: string
+  isDone: boolean
 }
 
 type ProblemState = {
   isCompleted: boolean
   showModal: boolean
   showModify: boolean
-}
-
-const problemDocRef = (problemId: number) =>
-  doc(db, 'problems', String(problemId))
-
-export async function saveProblemName(problemId: number, name: string) {
-  // merge:true 로 다른 필드가 있어도 안전
-  await setDoc(problemDocRef(problemId), { name }, { merge: true })
 }
 
 export function watchProblemName(
@@ -34,11 +26,6 @@ export function watchProblemName(
   })
 }
 
-export async function fetchProblemNameOnce(problemId: number) {
-  const snap = await getDoc(problemDocRef(problemId))
-  return snap.exists() ? (snap.data().name as string) : null
-}
-
 // 상수 정의
 const BUTTON_TYPES = {
   CLEAR: 'clear',
@@ -49,37 +36,38 @@ const BUTTON_TYPES = {
 
 type ButtonType = (typeof BUTTON_TYPES)[keyof typeof BUTTON_TYPES]
 
-function Problem({ id, onCompleteChange, onNameChange }: ProblemProps) {
+// 저장 함수 예시
+export async function saveProblemName(problemId: string, name: string) {
+  await updateDoc(doc(db, 'problems', problemId), { name: name })
+}
+
+// 완료/리셋 토글
+export async function setProblemDone(problemId: string, isDone: boolean) {
+  await updateDoc(doc(db, 'problems', problemId), { isDone: isDone })
+}
+
+function Problem({ id, name: propName, isDone }: ProblemProps) {
   const [inputValue, setInputValue] = useState<string>('')
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setInputValue(e.target.value)
   }
-
   const [name, setName] = useState<string>('')
+
+  useEffect(() => {
+    setName(propName)
+    setProblemState(prev => ({ ...prev, isCompleted: isDone }))
+  }, [propName, isDone])
+
   // 버튼 클릭 시 실행
   const handleConfirmNameChange = async () => {
     const next = inputValue.trim()
-    if (next.length === 0) return
+    setName(next)
     await saveProblemName(id, next)
-    // 저장하면 watch가 발화하여 name이 갱신됨
     closeModal()
   }
 
-  useEffect(() => {
-    const ref = doc(db, 'problems', 'problemId_' + String(id))
-    const unsub = onSnapshot(ref, snap => {
-      if (snap.exists()) {
-        console.log(id)
-        console.log(snap.data())
-        setName(snap.data().name ?? '')
-        onNameChange?.(id, snap.data().name)
-      }
-    })
-    return () => unsub()
-  }, [id, onNameChange])
-
   const [problemState, setProblemState] = useState<ProblemState>({
-    isCompleted: false,
+    isCompleted: isDone,
     showModal: false,
     showModify: false
   })
@@ -96,8 +84,7 @@ function Problem({ id, onCompleteChange, onNameChange }: ProblemProps) {
 
   // 모달 닫기
   const closeModal = useCallback(() => {
-    updateState({ showModal: false })
-    updateState({ showModify: false })
+    updateState({ showModal: false, showModify: false })
   }, [updateState])
 
   const modifyProblemName = useCallback(() => {
@@ -107,14 +94,14 @@ function Problem({ id, onCompleteChange, onNameChange }: ProblemProps) {
   // 문제 완료 처리
   const completeProblem = useCallback(() => {
     updateState({ isCompleted: true, showModal: false })
-    onCompleteChange?.(id, true)
-  }, [updateState, id, onCompleteChange])
+    setProblemDone(id, true)
+  }, [updateState, id])
 
   // 문제 리셋 처리
   const resetProblem = useCallback(() => {
     updateState({ isCompleted: false, showModal: false })
-    onCompleteChange?.(id, false) // ✅ 부모에 알림
-  }, [updateState, id, onCompleteChange])
+    setProblemDone(id, false)
+  }, [updateState, id])
 
   // 모달 외부 클릭 처리
   const handleModalOverlayClick = useCallback(() => {
@@ -168,11 +155,9 @@ function Problem({ id, onCompleteChange, onNameChange }: ProblemProps) {
       <button
         className="problem problem-button"
         onClick={openModal}
-        aria-label={`문제 ${id}`}
         aria-expanded={problemState.showModal}>
         {name}
       </button>
-
       {/* 완료 스탬프 */}
       {problemState.isCompleted && (
         <div
@@ -186,24 +171,17 @@ function Problem({ id, onCompleteChange, onNameChange }: ProblemProps) {
           />
         </div>
       )}
-
       {/* 모달창 */}
       {problemState.showModal && (
         <div
           className="modal-overlay"
           onClick={handleModalOverlayClick}
           role="dialog"
-          aria-modal="true"
-          aria-labelledby={`problem-title-${id}`}>
+          aria-modal="true">
           <div
             className="modal-content"
             onClick={handleModalContentClick}>
-            <h3
-              id={`problem-title-${id}`}
-              className="modal-title">
-              {name || <>문제</>}
-            </h3>
-
+            <h3 className="modal-title">{name || <>문제</>}</h3>
             <div
               className="modal-buttons"
               role="group"

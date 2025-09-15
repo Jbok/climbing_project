@@ -1,12 +1,41 @@
 import './Table.css'
 import Problem from './Problem.tsx'
-import { useState } from 'react'
+import { db } from './Firebase'
+import { collection, getDocs } from 'firebase/firestore'
+import { useState, useEffect } from 'react'
 
 const rows = 6
 const cols = 3
 const gap = 4
 
+async function getAllProblems(): Promise<Problem[]> {
+  const snap = await getDocs(collection(db, 'problems'))
+  return snap.docs.map(d => {
+    const data = d.data() as { id?: string; name?: string; isDone?: boolean }
+    return {
+      id: d.id,
+      name: data.name ?? '',
+      isDone: !!data.isDone
+    }
+  })
+}
+
+type Problem = {
+  id: string
+  name: string
+  isDone: boolean
+}
+
 function Table() {
+  const [problems, setProblems] = useState<Problem[]>([])
+
+  useEffect(() => {
+    getAllProblems().then(data => {
+      setProblems(data)
+      console.log(data)
+    })
+  }, [])
+
   // 412x915 화면에 맞춰 셀 크기 계산
   const maxWidth = 412
   const maxHeight = 915
@@ -25,27 +54,9 @@ function Table() {
     Array(rows * cols).fill(false)
   )
 
-  // ✅ Problem에서 호출할 콜백
-  const handleCompleteChange = (id: number, completed: boolean) => {
-    setCompletedStates(prev => {
-      const newStates = [...prev]
-      newStates[id] = completed
-      return newStates
-    })
-  }
-
   const [nameStates, setNameStates] = useState<boolean[]>(
     Array(rows * cols).fill(false)
   )
-
-  const handleNameChange = (id: number, hasName: boolean) => {
-    setNameStates(prev => {
-      const newStates = [...prev]
-      newStates[id] = hasName
-      return newStates
-    })
-  }
-
   // ✅ 완료된 개수 계산
   const completedCount = completedStates.filter(Boolean).length
   const nameCount = nameStates.filter(Boolean).length
@@ -64,11 +75,12 @@ function Table() {
             gridTemplateColumns: `repeat(${cols}, ${adjustedCellSize}px)`
           }}>
           {Array.from({ length: rows * cols }, (_, i: number) => {
+            const problem = problems[i]
             return (
               <Problem
-                id={i}
-                onCompleteChange={handleCompleteChange}
-                onNameChange={handleNameChange}
+                id={problem?.id ?? ''}
+                name={problem?.name ?? ''}
+                isDone={!!problem?.isDone}
               />
             )
           })}
