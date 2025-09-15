@@ -16,16 +16,6 @@ type ProblemState = {
   showModify: boolean
 }
 
-export function watchProblemName(
-  problemId: number,
-  onChange: (name: string | null) => void
-) {
-  return onSnapshot(problemDocRef(problemId), snap => {
-    const data = snap.data()
-    onChange(data?.name ?? null)
-  })
-}
-
 // 상수 정의
 const BUTTON_TYPES = {
   CLEAR: 'clear',

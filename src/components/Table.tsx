@@ -50,22 +50,22 @@ function Table() {
     100 // 최소 크기
   )
 
-  const [completedStates, setCompletedStates] = useState<boolean[]>(
-    Array(rows * cols).fill(false)
-  )
+  // const [completedStates, setCompletedStates] = useState<boolean[]>(
+  //   Array(rows * cols).fill(false)
+  // )
 
-  const [nameStates, setNameStates] = useState<boolean[]>(
-    Array(rows * cols).fill(false)
-  )
-  // ✅ 완료된 개수 계산
-  const completedCount = completedStates.filter(Boolean).length
-  const nameCount = nameStates.filter(Boolean).length
+  // const [nameStates, setNameStates] = useState<boolean[]>(
+  //   Array(rows * cols).fill(false)
+  // )
+  // // ✅ 완료된 개수 계산
+  // const completedCount = completedStates.filter(Boolean).length
+  // const nameCount = nameStates.filter(Boolean).length
 
   return (
     <>
       <h3>
-        {completedCount} / {nameCount} (
-        {((completedCount / nameCount) * 100).toFixed(1)} %)
+        {/* {completedCount} / {nameCount} (
+        {((completedCount / nameCount) * 100).toFixed(1)} %) */}
       </h3>
       <div className="table-container">
         <div
