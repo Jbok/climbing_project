@@ -27,12 +27,12 @@ const BUTTON_TYPES = {
 type ButtonType = (typeof BUTTON_TYPES)[keyof typeof BUTTON_TYPES]
 
 // 저장 함수 예시
-export async function saveProblemName(problemId: string, name: string) {
+async function saveProblemName(problemId: string, name: string) {
   await updateDoc(doc(db, 'problems', problemId), { name: name })
 }
 
 // 완료/리셋 토글
-export async function setProblemDone(problemId: string, isDone: boolean) {
+async function setProblemDone(problemId: string, isDone: boolean) {
   await updateDoc(doc(db, 'problems', problemId), { isDone: isDone })
 }
 

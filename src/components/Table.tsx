@@ -1,5 +1,6 @@
 import './Table.css'
 import Problem from './Problem.tsx'
+import TotalScore from './TotalScore.tsx'
 import { db } from './Firebase'
 import { collection, getDocs } from 'firebase/firestore'
 import { useState, useEffect } from 'react'
@@ -63,10 +64,10 @@ function Table() {
 
   return (
     <>
-      <h3>
-        {/* {completedCount} / {nameCount} (
-        {((completedCount / nameCount) * 100).toFixed(1)} %) */}
-      </h3>
+      <TotalScore
+        totalProblemNum={10}
+        completeProblemNum={7}
+      />
       <div className="table-container">
         <div
           className="problem-grid"
