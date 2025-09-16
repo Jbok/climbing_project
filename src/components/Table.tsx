@@ -29,11 +29,14 @@ type Problem = {
 
 function Table() {
   const [problems, setProblems] = useState<Problem[]>([])
+  const [totalProblemNum, setTotalProblemNum] = useState<number>(0)
+  const [completeProblemNum, setCompleteProblemNum] = useState<number>(0)
 
   useEffect(() => {
     getAllProblems().then(data => {
       setProblems(data)
-      console.log(data)
+      setTotalProblemNum(data.filter(p => p.name.trim() !== '').length)
+      setCompleteProblemNum(data.filter(p => p.isDone).length)
     })
   }, [])
 
@@ -51,22 +54,11 @@ function Table() {
     100 // 최소 크기
   )
 
-  // const [completedStates, setCompletedStates] = useState<boolean[]>(
-  //   Array(rows * cols).fill(false)
-  // )
-
-  // const [nameStates, setNameStates] = useState<boolean[]>(
-  //   Array(rows * cols).fill(false)
-  // )
-  // // ✅ 완료된 개수 계산
-  // const completedCount = completedStates.filter(Boolean).length
-  // const nameCount = nameStates.filter(Boolean).length
-
   return (
     <>
       <TotalScore
-        totalProblemNum={10}
-        completeProblemNum={7}
+        totalProblemNum={totalProblemNum}
+        completeProblemNum={completeProblemNum}
       />
       <div className="table-container">
         <div
