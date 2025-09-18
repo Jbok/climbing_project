@@ -3,7 +3,8 @@ import Problem from './Problem.tsx'
 import TotalScore from './TotalScore.tsx'
 import { db } from './Firebase'
 import { collection, getDocs } from 'firebase/firestore'
-import { useState, useEffect, useCallback, ReactElement } from 'react'
+import { useState, useEffect, useCallback } from 'react'
+import type { ReactElement } from 'react'
 
 const rows = 6
 const cols = 3
