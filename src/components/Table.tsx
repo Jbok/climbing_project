@@ -52,17 +52,21 @@ function Table() {
   }, [problems, isLoading])
 
   // 412x915 화면에 맞춰 셀 크기 계산
-  const maxWidth = 412
-  const maxHeight = 915
+  const maxWidth = 400
+  const maxHeight = 900
   const padding = 32 // 좌우 패딩 고려
   const availableWidth = maxWidth - padding
   const availableHeight = maxHeight - padding
 
+  // 라벨 컬럼 너비
+  const labelWidth = 72
+
   // 그리드가 화면에 맞도록 셀 크기 조정
+  // (라벨 1칸 + 문제 cols칸, 컬럼 사이 간격은 cols개)
   const adjustedCellSize = Math.min(
-    Math.floor((availableWidth - gap * (cols - 1)) / cols),
+    Math.floor((availableWidth - labelWidth - gap * cols) / cols),
     Math.floor((availableHeight - gap * (rows - 1)) / rows),
-    100 // 최소 크기
+    100 // 기존 로직 유지
   )
 
   const handleProblemChange = useCallback(
@@ -78,31 +82,49 @@ function Table() {
     return <div className="table-container">Loading...</div>
   }
 
+  // "Sector A/B/..." 라벨 생성
+  const sectorLabel = (r: number) => `Sector ${String.fromCharCode(65 + r)}`
+
+  // 라벨 + 문제 셀들을 순서대로 쌓기
+  const gridCells: JSX.Element[] = []
+  for (let r = 0; r < rows; r++) {
+    gridCells.push(
+      <div
+        key={`label-${r}`}
+        className="row-label">
+        {sectorLabel(r)}
+      </div>
+    )
+    for (let c = 0; c < cols; c++) {
+      const i = r * cols + c
+      const problem = problems[i]
+      gridCells.push(
+        <Problem
+          key={problem?.id ?? `empty-${i}`}
+          id={problem?.id ?? ''}
+          name={problem?.name ?? ''}
+          isDone={!!problem?.isDone}
+          onChange={handleProblemChange}
+        />
+      )
+    }
+  }
+
   return (
     <>
       <TotalScore
         totalProblemNum={totalProblemNum}
         completeProblemNum={completeProblemNum}
       />
-      {console.log(problems)}
       <div className="table-container">
         <div
           className="problem-grid"
           style={{
             gridTemplateRows: `repeat(${rows}, ${adjustedCellSize}px)`,
-            gridTemplateColumns: `repeat(${cols}, ${adjustedCellSize}px)`
+            gridTemplateColumns: `${labelWidth}px repeat(${cols}, ${adjustedCellSize}px)`,
+            gap: `${gap}px`
           }}>
-          {Array.from({ length: rows * cols }, (_, i: number) => {
-            const problem = problems[i]
-            return (
-              <Problem
-                id={problem?.id ?? ''}
-                name={problem?.name ?? ''}
-                isDone={!!problem?.isDone}
-                onChange={handleProblemChange}
-              />
-            )
-          })}
+          {gridCells}
         </div>
       </div>
     </>

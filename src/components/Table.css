@@ -16,6 +16,26 @@
   margin: 0 auto;
 }
 
+/* 라벨이 들어가는 그리드일 때 약간의 좌우 여백 보정 */
+.problem-grid.with-row-labels {
+  align-items: center;
+}
+
+/* ===== 각 행 맨 앞 라벨 ===== */
+.row-label {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 0 10px;
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: var(--problem-text-color);
+  background: #fafafa;
+  border-radius: 8px;
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
+}
+
 /* ===== 412x915 모바일 최적화 ===== */
 @media (max-width: 412px) {
   .table-container {
@@ -26,6 +46,11 @@
   .problem-grid {
     gap: 3px;
     padding: 3px;
+  }
+
+  .row-label {
+    padding: 0 8px;
+    font-size: 0.9rem;
   }
 }
 

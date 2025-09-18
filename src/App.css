@@ -1,9 +1,10 @@
 #root {
   max-width: 412px;
+  max-height: 915px;
   margin: 0 auto;
   padding: 0;
   text-align: center;
-  min-height: 100vh;
+  /* min-height: 100vh; */
   background-color: #f5f5f5;
 }
 
