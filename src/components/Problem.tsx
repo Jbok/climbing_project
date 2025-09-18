@@ -1,7 +1,7 @@
 import './Problem.css'
 import { db } from './Firebase'
 import { doc, updateDoc } from 'firebase/firestore'
-import { useState, useCallback, useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import clearStampImsage from '../assets/clear_stamp.png'
 import ProblemModal from './ProblemModal.tsx'
 

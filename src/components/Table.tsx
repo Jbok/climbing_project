@@ -3,7 +3,7 @@ import Problem from './Problem.tsx'
 import TotalScore from './TotalScore.tsx'
 import { db } from './Firebase'
 import { collection, getDocs } from 'firebase/firestore'
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, ReactElement } from 'react'
 
 const rows = 6
 const cols = 3
@@ -86,7 +86,7 @@ function Table() {
   const sectorLabel = (r: number) => `Sector ${String.fromCharCode(65 + r)}`
 
   // 라벨 + 문제 셀들을 순서대로 쌓기
-  const gridCells: JSX.Element[] = []
+  const gridCells: ReactElement[] = []
   for (let r = 0; r < rows; r++) {
     gridCells.push(
       <div
