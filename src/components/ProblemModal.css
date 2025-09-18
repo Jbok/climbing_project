@@ -1,0 +1,111 @@
+/* ===== 모달 오버레이 ===== */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  animation: fadeIn 0.2s ease-out;
+}
+
+/* ===== 모달 내용 ===== */
+.modal-content {
+  background-color: white;
+  padding: 20px;
+  border-radius: var(--problem-modal-radius);
+  box-shadow: var(--problem-shadow);
+  width: 320px;
+  max-width: calc(100vw - 40px);
+  text-align: center;
+  position: relative;
+  animation: slideIn 0.3s ease-out;
+}
+
+.modal-title {
+  margin: 0 0 20px 0;
+  color: var(--problem-text-color);
+  font-size: 16px;
+  font-weight: 600;
+}
+
+/* ===== 모달 버튼 그룹 ===== */
+.modal-buttons {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.modal-button {
+  padding: 10px 16px;
+  color: white;
+  border: none;
+  border-radius: var(--problem-border-radius);
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+  min-width: 70px;
+  flex: 1;
+  transition: all 0.2s ease;
+}
+
+.modal-button:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
+}
+
+.modal-button:active {
+  transform: translateY(0);
+}
+
+.modal-button:focus {
+  outline: 2px solid rgba(255, 255, 255, 0.5);
+  outline-offset: 2px;
+}
+
+/* ===== 버튼 타입별 색상 ===== */
+.modal-button-clear {
+  background-color: var(--problem-primary-color);
+}
+
+.modal-button-unclear {
+  background-color: var(--problem-warning-color);
+}
+
+.modal-button-edit {
+  background-color: var(--problem-info-color);
+}
+
+/* ===== 닫기 버튼 ===== */
+.modal-close-button {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background-color: transparent;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+  color: var(--problem-border-color);
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.modal-close-button:hover {
+  color: var(--problem-text-color);
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+.modal-close-button:focus {
+  outline: 2px solid var(--problem-info-color);
+  outline-offset: 2px;
+}
